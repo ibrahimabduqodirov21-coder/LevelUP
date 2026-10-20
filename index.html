@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyPlan — Студенческий Дашборд</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #18233b;
+            --blue: #4f6df5;
+            --blue-hover: #3b58e0;
+            --blue-light: #edf1ff;
+            --text: #172443;
+            --muted: #78849d;
+            --border: #e7edf7;
+            --background: #f5f7fc;
+            --white: #ffffff;
+            --green: #13a77c;
+            --green-light: #dff8ee;
+            --purple: #8257e8;
+            --purple-light: #eee8ff;
+            --orange: #e89a27;
+            --orange-light: #fff0d9;
+            --red: #d74444;
+            --red-light: #ffebeb;
+            --shadow: 0 4px 15px rgba(35, 57, 100, 0.04);
+            --radius: 14px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            font-size: 14px;
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        button, input, select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 245px;
+            background: linear-gradient(180deg, #202e4e, #18233b);
+            color: white;
+            padding: 28px 16px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .brand {
+            font-size: 22px;
+            font-weight: 800;
+            color: white;
+            text-decoration: none;
+            margin: 0 8px 36px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-icon {
+            background: var(--blue);
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            font-size: 18px;
+        }
+
+        .navigation {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .nav-link {
+            color: #c2cce2;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+        }
+
+        .nav-link.active {
+            font-weight: 600;
+            background: var(--blue);
+        }
+
+        .nav-icon {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-card {
+            margin-top: auto;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .sidebar-card p {
+            color: #d3dcf0;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .sidebar-illustration {
+            font-size: 42px;
+            margin-top: 10px;
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            min-width: 0;
+            padding: 0 28px 28px;
+        }
+
+        /* Topbar */
+        .topbar {
+            min-height: 74px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .search-box {
+            position: relative;
+            width: min(420px, 60%);
+        }
+
+        .search-box input {
+            width: 100%;
+            border: 1px solid var(--border);
+            background: white;
+            padding: 10px 14px 10px 38px;
+            border-radius: 10px;
+            font-size: 13px;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--blue);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .notif-btn {
+            position: relative;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: white;
+            border: 1px solid var(--border);
+            display: grid;
+            place-items: center;
+            font-size: 16px;
+            color: var(--text);
+            transition: background 0.2s;
+        }
+
+        .notif-btn:hover {
+            background: var(--blue-light);
+        }
+
+        .notif-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: var(--red);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            border: 2px solid white;
+        }
+
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 12px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .profile-btn:hover {
+            background: var(--blue-light);
+            border-color: #cbd8ff;
+        }
+
+        .profile-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #4f6df5;
+            color: white;
+            display: grid;
+            place-items: center;
+            font-size: 13px;
+        }
+
+        /* Notifications Dropdown */
+        .notif-dropdown {
+            position: absolute;
+            top: 65px;
+            right: 140px;
+            width: 320px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            z-index: 100;
+            display: none;
+            padding: 12px;
+        }
+
+        .notif-dropdown.active {
+            display: block;
+        }
+
+        .notif-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 8px;
+        }
+
+        .notif-item {
+            padding: 8px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            background: #f8faff;
+            font-size: 12px;
+        }
+
+        .notif-item strong {
+            display: block;
+            color: var(--text);
+        }
+
+        /* Welcome Banner */
+        .welcome {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 22px;
+        }
+
+        .welcome h1 {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .welcome p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .today-date-badge {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--text);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Stat Cards */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .stat-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .blue { background: var(--blue-light); color: var(--blue); }
+        .purple { background: var(--purple-light); color: var(--purple); }
+        .green { background: var(--green-light); color: var(--green); }
+        .orange { background: var(--orange-light); color: var(--orange); }
+
+        .stat-card h2 {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 2px;
+        }
+
+        .stat-card p {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* Main Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.8fr) minmax(280px, 1fr);
+            gap: 20px;
+            align-items: start;
+        }
+
+        .left-column, .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 0;
+        }
+
+        .panel {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .panel-header h2 {
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .btn-primary {
+            background: var(--blue);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: var(--blue-hover);
+        }
+
+        .btn-secondary {
+            background: #f0f3f9;
+            color: var(--text);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Action Buttons for Items */
+        .action-btns {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .edit-btn, .delete-btn {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+
+        .edit-btn {
+            color: var(--blue);
+        }
+
+        .edit-btn:hover {
+            background: var(--blue-light);
+        }
+
+        .delete-btn {
+            color: var(--muted);
+        }
+
+        .delete-btn:hover {
+            color: var(--red);
+            background: var(--red-light);
+        }
+
+        /* Tasks Panel */
+        .task-filters {
+            display: flex;
+            gap: 6px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        .filter-btn.active {
+            background: var(--blue-light);
+            color: var(--blue);
+            font-weight: 600;
+        }
+
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .task-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #f0f3f9;
+            transition: background 0.15s;
+        }
+
+        .task-row:hover {
+            background: #f8faff;
+        }
+
+        .task-checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--blue);
+            cursor: pointer;
+        }
+
+        .task-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .task-title {
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .task-meta {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .task-row.completed .task-title {
+            text-decoration: line-through;
+            color: var(--muted);
+        }
+
+        .priority-tag {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .priority-High { background: var(--red-light); color: var(--red); }
+        .priority-Medium { background: var(--orange-light); color: var(--orange); }
+        .priority-Low { background: var(--green-light); color: var(--green); }
+
+        /* Timetable / Schedule Panel */
+        .week-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 14px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .week-tab {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--muted);
+            background: #f0f3f9;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .week-tab.active {
+            background: var(--blue);
+            color: white;
+        }
+
+        .schedule-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .schedule-item {
+            display: grid;
+            grid-template-columns: 80px 1fr auto;
+            gap: 12px;
+            padding: 10px 12px;
+            background: #f8faff;
+            border-radius: 8px;
+            border-left: 3px solid var(--blue);
+            align-items: center;
+        }
+
+        .schedule-time {
+            font-size: 11px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .schedule-details strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .schedule-details span {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        /* Forms */
+        .form-wrap {
+            background: #f8faff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+
+        .form-wrap label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .form-wrap input, .form-wrap select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        /* Calendar Panel */
+        .calendar-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .calendar-heading button {
+            color: var(--blue);
+            font-size: 18px;
+            font-weight: 700;
+            padding: 2px 8px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            text-align: center;
+        }
+
+        .calendar-weekdays {
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .calendar-day.today {
+            background: var(--blue);
+            color: white;
+            font-weight: 700;
+        }
+
+        .calendar-day:hover:not(.blank):not(.today) {
+            background: var(--blue-light);
+        }
+
+        /* Exams Panel */
+        .exam-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .exam-item:last-child {
+            border-bottom: 0;
+        }
+
+        .exam-icon {
+            font-size: 20px;
+            background: var(--blue-light);
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .exam-info {
+            flex: 1;
+        }
+
+        .exam-info strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .exam-info span {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        /* Subject Progress */
+        .subject-progress {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .subject-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .subject-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .progress-track {
+            height: 6px;
+            background: #edf0f8;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--blue);
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+
+        /* Profile Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.4);
+            display: none;
+            place-items: center;
+            z-index: 200;
+        }
+
+        .modal.active {
+            display: grid;
+        }
+
+        .modal-card {
+            background: white;
+            padding: 24px;
+            border-radius: var(--radius);
+            width: min(400px, 90%);
+        }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 900px) {
+            .stats { grid-template-columns: repeat(2, 1fr); }
+            .content-grid { grid-template-columns: 1fr; }
+            .sidebar { width: 70px; padding: 16px 8px; }
+            .brand span, .nav-link span, .sidebar-card { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <a href="#" class="brand">
+            <div class="brand-icon">🎓</div>
+            <span>StudyPlan</span>
+        </a>
+
+        <nav class="navigation">
+            <a href="#dashboard" class="nav-link active">
+                <span class="nav-icon">⌂</span>
+                <span>Главная</span>
+            </a>
+            <a href="#tasks" class="nav-link">
+                <span class="nav-icon">☑</span>
+                <span>Задания</span>
+            </a>
+            <a href="#schedule" class="nav-link">
+                <span class="nav-icon">▦</span>
+                <span>Расписание</span>
+            </a>
+            <a href="#exams" class="nav-link">
+                <span class="nav-icon">✎</span>
+                <span>Экзамены</span>
+            </a>
+            <a href="#progress" class="nav-link">
+                <span class="nav-icon">▥</span>
+                <span>Прогресс</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-card">
+            <p>Маленькие шаги каждый день приводят к большим результатам!</p>
+            <div class="sidebar-illustration">📚☕</div>
+        </div>
+    </aside>
+
+    <!-- Main Section -->
+    <main class="main">
+        <!-- Topbar -->
+        <header class="topbar">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="search" id="searchInput" placeholder="Поиск заданий...">
+            </div>
+
+            <div class="topbar-right">
+                <button class="notif-btn" id="notifBtn">
+                    🔔
+                    <span class="notif-badge" id="notifBadge">2</span>
+                </button>
+
+                <!-- Notifications Dropdown -->
+                <div class="notif-dropdown" id="notifDropdown">
+                    <div class="notif-header">
+                        <strong>Уведомления</strong>
+                        <button style="font-size: 11px; color: var(--blue);" id="clearNotifs">Очистить</button>
+                    </div>
+                    <div id="notifList">
+                        <div class="notif-item">
+                            <strong>Скоро экзамен по Математике!</strong>
+                            <span class="muted">Через 3 дня в 10:00</span>
+                        </div>
+                        <div class="notif-item">
+                            <strong>Лабораторная по Python</strong>
+                            <span class="muted">Дедлайн сегодня</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="profile-btn" id="profileBtn">
+                    <div class="profile-avatar" id="avatarLetter">А</div>
+                    <span id="userNameDisplay">Алишер</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Welcome Banner -->
+        <section class="welcome" id="dashboard">
+            <div>
+                <h1 id="greetingText">Привет, Алишер! 👋</h1>
+                <p>Пусть твои планы сегодня станут реальностью! 🚀</p>
+            </div>
+            <div class="today-date-badge">
+                📅 <span id="todayDateStr">--.--.----</span>
+            </div>
+        </section>
+
+        <!-- Dynamic Stat Cards -->
+        <section class="stats">
+            <article class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon blue">✓</div>
+                </div>
+                <h2 id="todayCount">0</h2>
+                <p>Заданий сегодня</p>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon purple">▦</div>
+                </div>
+                <h2 id="examCount">0</h2>
+                <p>Экзамена в этом месяце</p>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon green">▣</div>
+                </div>
+                <h2 id="subjectCount">0</h2>
+                <p>Предметов</p>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon orange">◔</div>
+                </div>
+                <h2 id="progressNumber">0%</h2>
+                <p>Общий прогресс</p>
+            </article>
+        </section>
+
+        <!-- Grid Layout -->
+        <div class="content-grid">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Tasks Panel -->
+                <section class="panel" id="tasks">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Ближайшие задания</h2>
+                            <p class="muted" style="font-size: 12px;">Организуй свои задачи</p>
+                        </div>
+                        <button class="btn-primary" id="addTaskBtn">+ Добавить</button>
+                    </div>
+
+                    <!-- Task Add / Edit Form -->
+                    <div class="form-wrap hidden" id="taskFormWrap">
+                        <input type="hidden" id="editingTaskId">
+                        <label>Название задания</label>
+                        <input type="text" id="taskTitle" placeholder="Например, Сдать лабораторную работу" required>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div>
+                                <label>Дата дедлайна</label>
+                                <input type="date" id="taskDate">
+                            </div>
+                            <div>
+                                <label>Приоритет</label>
+                                <select id="taskPriority">
+                                    <option value="Low">Низкий</option>
+                                    <option value="Medium" selected>Средний</option>
+                                    <option value="High">Высокий</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="cancelTaskBtn">Отмена</button>
+                            <button type="button" class="btn-primary" id="saveTaskBtn">Сохранить</button>
+                        </div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="task-filters">
+                        <button class="filter-btn active" data-filter="all">Все</button>
+                        <button class="filter-btn" data-filter="active">Активные</button>
+                        <button class="filter-btn" data-filter="completed">Завершенные</button>
+                    </div>
+
+                    <!-- Tasks List -->
+                    <div class="task-list" id="taskList"></div>
+                </section>
+
+                <!-- Weekly Schedule Panel -->
+                <section class="panel" id="schedule">
+                    <div class="panel-header">
+                        <h2>Расписание на неделю</h2>
+                        <button class="btn-secondary" style="font-size: 11px;" id="addScheduleBtn">+ Занятие</button>
+                    </div>
+
+                    <!-- Schedule Add / Edit Form -->
+                    <div class="form-wrap hidden" id="scheduleFormWrap">
+                        <input type="hidden" id="editingSchedIndex">
+                        <label>Предмет</label>
+                        <input type="text" id="schedSubject" placeholder="Математика">
+                        <label>Время</label>
+                        <input type="text" id="schedTime" placeholder="08:00 - 09:30">
+                        <label>Аудитория / Преподаватель</label>
+                        <input type="text" id="schedRoom" placeholder="Ауд. 101 | Иванов И.И.">
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="cancelSchedBtn">Отмена</button>
+                            <button type="button" class="btn-primary" id="saveSchedBtn">Сохранить</button>
+                        </div>
+                    </div>
+
+                    <div class="week-tabs" id="weekTabs">
+                        <button class="week-tab active" data-day="Mon">Пн</button>
+                        <button class="week-tab" data-day="Tue">Вт</button>
+                        <button class="week-tab" data-day="Wed">Ср</button>
+                        <button class="week-tab" data-day="Thu">Чт</button>
+                        <button class="week-tab" data-day="Fri">Пт</button>
+                        <button class="week-tab" data-day="Sat">Сб</button>
+                    </div>
+
+                    <div class="schedule-list" id="scheduleList"></div>
+                </section>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column">
+                <!-- Auto Calendar -->
+                <section class="panel">
+                    <div class="calendar-heading">
+                        <button id="prevMonth">‹</button>
+                        <strong id="monthLabel" style="font-size: 14px;">---</strong>
+                        <button id="nextMonth">›</button>
+                    </div>
+                    <div class="calendar-grid calendar-weekdays">
+                        <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
+                    </div>
+                    <div class="calendar-grid" id="calendarDays"></div>
+                </section>
+
+                <!-- Subject Progress Panel -->
+                <section class="panel" id="progress">
+                    <div class="panel-header">
+                        <h2>Прогресс по предметам</h2>
+                        <button class="btn-secondary" style="font-size: 11px;" id="addSubjectBtn">+ Предмет</button>
+                    </div>
+
+                    <!-- Subject Add / Edit Form -->
+                    <div class="form-wrap hidden" id="subjectFormWrap">
+                        <input type="hidden" id="editingSubjectId">
+                        <label>Название предмета</label>
+                        <input type="text" id="subjectNameInput" placeholder="Математика">
+                        <label>Прогресс (%)</label>
+                        <input type="number" id="subjectProgInput" min="0" max="100" placeholder="80">
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="cancelSubjectBtn">Отмена</button>
+                            <button type="button" class="btn-primary" id="saveSubjectBtn">Сохранить</button>
+                        </div>
+                    </div>
+
+                    <div class="subject-progress" id="subjectProgressList"></div>
+                </section>
+
+                <!-- Exams Panel -->
+                <section class="panel" id="exams">
+                    <div class="panel-header">
+                        <h2>Ближайшие экзамены</h2>
+                        <button class="btn-secondary" style="font-size: 11px;" id="addExamBtn">+ Экзамен</button>
+                    </div>
+
+                    <!-- Exam Add / Edit Form -->
+                    <div class="form-wrap hidden" id="examFormWrap">
+                        <input type="hidden" id="editingExamId">
+                        <label>Предмет</label>
+                        <input type="text" id="examSubject" placeholder="Высшая Математика">
+                        <label>Дата экзамена</label>
+                        <input type="date" id="examDate">
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="cancelExamBtn">Отмена</button>
+                            <button type="button" class="btn-primary" id="saveExamBtn">Сохранить</button>
+                        </div>
+                    </div>
+
+                    <div id="examList"></div>
+                </section>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Profile Modal -->
+<div class="modal" id="profileModal">
+    <div class="modal-card">
+        <h2 style="margin-bottom: 14px;">Настройки Профиля</h2>
+        <label style="font-size: 12px; font-weight: 600;">Ваше Имя</label>
+        <input type="text" id="profileNameInput" style="width: 100%; padding: 8px; margin: 6px 0 16px; border: 1px solid var(--border); border-radius: 6px;">
+        <div class="form-actions">
+            <button class="btn-secondary" id="closeProfileBtn">Закрыть</button>
+            <button class="btn-primary" id="saveProfileBtn">Сохранить</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Global State & Storage
+    let tasks = JSON.parse(localStorage.getItem('sp_tasks')) || [
+        { id: '1', title: 'Сдать лабораторную работу по Python', date: '2026-10-22', priority: 'High', completed: false },
+        { id: '2', title: 'Подготовиться к экзамену по математике', date: '2026-10-25', priority: 'Medium', completed: false }
+    ];
+
+    let exams = JSON.parse(localStorage.getItem('sp_exams')) || [
+        { id: '1', subject: 'Математика', date: '2026-10-25' },
+        { id: '2', subject: 'Программирование', date: '2026-11-05' }
+    ];
+
+    let subjects = JSON.parse(localStorage.getItem('sp_subjects')) || [
+        { id: '1', name: 'Python Programming', progress: 80, color: 'var(--blue)' },
+        { id: '2', name: 'Математика', progress: 60, color: 'var(--purple)' },
+        { id: '3', name: 'Физика', progress: 40, color: 'var(--green)' }
+    ];
+
+    let schedule = JSON.parse(localStorage.getItem('sp_schedule')) || {
+        Mon: [{ time: '08:00 - 09:30', subject: 'Математика', room: 'Ауд. 101' }],
+        Tue: [
+            { time: '10:00 - 11:30', subject: 'Python', room: 'Ауд. 203' },
+            { time: '12:00 - 13:30', subject: 'физра', room: 'на улице / Иброхимов Байл Тилекович' }
+        ],
+        Wed: [{ time: '13:00 - 14:30', subject: 'Физика', room: 'Ауд. 305' }],
+        Thu: [], Fri: [], Sat: []
+    };
+
+    let userProfile = JSON.parse(localStorage.getItem('sp_profile')) || { name: 'Алишер' };
+
+    let currentFilter = 'all';
+    let currentDay = 'Tue';
+    let calendarDate = new Date();
+
+    const $ = sel => document.querySelector(sel);
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initDateAndGreeting();
+        renderProfile();
+        renderTasks();
+        renderExams();
+        renderSchedule();
+        renderSubjects();
+        renderCalendar();
+        setupEventListeners();
+    });
+
+    function renderProfile() {
+        $('#userNameDisplay').textContent = userProfile.name;
+        $('#avatarLetter').textContent = userProfile.name.charAt(0).toUpperCase();
+        $('#greetingText').textContent = `Привет, ${userProfile.name}! 👋`;
+    }
+
+    function initDateAndGreeting() {
+        const now = new Date();
+        const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+        $('#todayDateStr').textContent = now.toLocaleDateString('ru-RU', options);
+    }
+
+    // TASKS FUNCTIONS
+    function renderTasks() {
+        const searchVal = $('#searchInput').value.toLowerCase();
+        const filtered = tasks.filter(t => {
+            const matchesFilter = currentFilter === 'all' || 
+                (currentFilter === 'active' && !t.completed) || 
+                (currentFilter === 'completed' && t.completed);
+            const matchesSearch = t.title.toLowerCase().includes(searchVal);
+            return matchesFilter && matchesSearch;
+        });
+
+        const container = $('#taskList');
+        if (filtered.length === 0) {
+            container.innerHTML = `<p class="muted" style="text-align: center; padding: 12px;">Заданий не найдено</p>`;
+        } else {
+            container.innerHTML = filtered.map(t => `
+                <div class="task-row ${t.completed ? 'completed' : ''}">
+                    <input type="checkbox" class="task-checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTask('${t.id}')">
+                    <div class="task-info">
+                        <div class="task-title">${escapeHTML(t.title)}</div>
+                        <div class="task-meta">${t.date ? 'До: ' + t.date : 'Без срока'}</div>
+                    </div>
+                    <span class="priority-tag priority-${t.priority}">${t.priority}</span>
+                    <div class="action-btns">
+                        <button class="edit-btn" onclick="editTask('${t.id}')">✏️</button>
+                        <button class="delete-btn" onclick="deleteTask('${t.id}')">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        updateStats();
+    }
+
+    function toggleTask(id) {
+        tasks = tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
+        saveAndReload();
+    }
+
+    function deleteTask(id) {
+        if(confirm("Удалить это задание?")) {
+            tasks = tasks.filter(t => t.id !== id);
+            saveAndReload();
+        }
+    }
+
+    function editTask(id) {
+        const task = tasks.find(t => t.id === id);
+        if(!task) return;
+        $('#editingTaskId').value = task.id;
+        $('#taskTitle').value = task.title;
+        $('#taskDate').value = task.date || '';
+        $('#taskPriority').value = task.priority;
+        $('#taskFormWrap').classList.remove('hidden');
+    }
+
+    // SCHEDULE FUNCTIONS
+    function renderSchedule() {
+        const list = schedule[currentDay] || [];
+        const container = $('#scheduleList');
+
+        if (list.length === 0) {
+            container.innerHTML = `<p class="muted" style="text-align: center; padding: 10px;">Выходной день или нет пар</p>`;
+            return;
+        }
+
+        container.innerHTML = list.map((s, index) => `
+            <div class="schedule-item">
+                <div class="schedule-time">${escapeHTML(s.time || 'Время не указано')}</div>
+                <div class="schedule-details">
+                    <strong>${escapeHTML(s.subject)}</strong>
+                    <span>${escapeHTML(s.room)}</span>
+                </div>
+                <div class="action-btns">
+                    <button class="edit-btn" onclick="editSchedule(${index})">✏️</button>
+                    <button class="delete-btn" onclick="deleteSchedule(${index})">🗑️</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function deleteSchedule(index) {
+        if(confirm("Удалить это занятие из расписания?")) {
+            schedule[currentDay].splice(index, 1);
+            saveAndReload();
+            renderSchedule();
+        }
+    }
+
+    function editSchedule(index) {
+        const item = schedule[currentDay][index];
+        if(!item) return;
+        $('#editingSchedIndex').value = index;
+        $('#schedSubject').value = item.subject;
+        $('#schedTime').value = item.time;
+        $('#schedRoom').value = item.room;
+        $('#scheduleFormWrap').classList.remove('hidden');
+    }
+
+    // EXAMS FUNCTIONS
+    function renderExams() {
+        const container = $('#examList');
+        if (exams.length === 0) {
+            container.innerHTML = `<p class="muted" style="text-align: center; padding: 10px;">Экзаменов нет</p>`;
+            return;
+        }
+
+        container.innerHTML = exams.map(e => `
+            <div class="exam-item">
+                <div class="exam-icon">📐</div>
+                <div class="exam-info">
+                    <strong>${escapeHTML(e.subject)}</strong>
+                    <span>Дата: ${e.date || 'Не указана'}</span>
+                </div>
+                <div class="action-btns">
+                    <button class="edit-btn" onclick="editExam('${e.id}')">✏️</button>
+                    <button class="delete-btn" onclick="deleteExam('${e.id}')">🗑️</button>
+                </div>
+            </div>
+        `).join('');
+
+        $('#examCount').textContent = exams.length;
+    }
+
+    function deleteExam(id) {
+        if(confirm("Удалить этот экзамен?")) {
+            exams = exams.filter(e => e.id !== id);
+            saveAndReload();
+        }
+    }
+
+    function editExam(id) {
+        const exam = exams.find(e => e.id === id);
+        if(!exam) return;
+        $('#editingExamId').value = exam.id;
+        $('#examSubject').value = exam.subject;
+        $('#examDate').value = exam.date || '';
+        $('#examFormWrap').classList.remove('hidden');
+    }
+
+    // SUBJECTS & PROGRESS FUNCTIONS
+    function renderSubjects() {
+        const container = $('#subjectProgressList');
+        if (subjects.length === 0) {
+            container.innerHTML = `<p class="muted" style="text-align: center; padding: 10px;">Предметов пока нет</p>`;
+            $('#subjectCount').textContent = 0;
+            return;
+        }
+
+        container.innerHTML = subjects.map(sb => `
+            <div class="subject-item">
+                <div class="subject-header">
+                    <span>${escapeHTML(sb.name)}</span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <strong>${sb.progress}%</strong>
+                        <button class="edit-btn" style="padding:0;" onclick="editSubject('${sb.id}')">✏️</button>
+                        <button class="delete-btn" style="padding:0;" onclick="deleteSubject('${sb.id}')">🗑️</button>
+                    </div>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" style="width: ${sb.progress}%; background: ${sb.color || 'var(--blue)'};"></div>
+                </div>
+            </div>
+        `).join('');
+
+        $('#subjectCount').textContent = subjects.length;
+    }
+
+    function deleteSubject(id) {
+        if(confirm("Удалить этот предмет?")) {
+            subjects = subjects.filter(s => s.id !== id);
+            saveAndReload();
+            renderSubjects();
+        }
+    }
+
+    function editSubject(id) {
+        const sb = subjects.find(s => s.id === id);
+        if(!sb) return;
+        $('#editingSubjectId').value = sb.id;
+        $('#subjectNameInput').value = sb.name;
+        $('#subjectProgInput').value = sb.progress;
+        $('#subjectFormWrap').classList.remove('hidden');
+    }
+
+    // STATS
+    function updateStats() {
+        const activeTasks = tasks.filter(t => !t.completed).length;
+        const total = tasks.length;
+        const progress = total > 0 ? Math.round(((total - activeTasks) / total) * 100) : 0;
+
+        $('#todayCount').textContent = activeTasks;
+        $('#progressNumber').textContent = `${progress}%`;
+    }
+
+    // CALENDAR
+    function renderCalendar() {
+        const year = calendarDate.getFullYear();
+        const month = calendarDate.getMonth();
+
+        $('#monthLabel').textContent = calendarDate.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
+
+        const firstDay = new Date(year, month, 1);
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const offset = (firstDay.getDay() + 6) % 7;
+
+        const today = new Date();
+        const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+
+        let html = '';
+        for (let i = 0; i < offset; i++) html += `<span class="calendar-day blank"></span>`;
+
+        for (let d = 1; d <= daysInMonth; d++) {
+            const isToday = isCurrentMonth && today.getDate() === d;
+            html += `<span class="calendar-day ${isToday ? 'today' : ''}">${d}</span>`;
+        }
+
+        $('#calendarDays').innerHTML = html;
+    }
+
+    function saveAndReload() {
+        localStorage.setItem('sp_tasks', JSON.stringify(tasks));
+        localStorage.setItem('sp_exams', JSON.stringify(exams));
+        localStorage.setItem('sp_schedule', JSON.stringify(schedule));
+        localStorage.setItem('sp_subjects', JSON.stringify(subjects));
+        localStorage.setItem('sp_profile', JSON.stringify(userProfile));
+        renderTasks();
+        renderExams();
+        renderSubjects();
+    }
+
+    function escapeHTML(str) {
+        return String(str).replace(/[&<>"']/g, match => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        })[match]);
+    }
+
+    function setupEventListeners() {
+        // Task Filters
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentFilter = e.target.dataset.filter;
+                renderTasks();
+            });
+        });
+
+        $('#searchInput').addEventListener('input', renderTasks);
+
+        // Task Form Toggle & Save
+        $('#addTaskBtn').addEventListener('click', () => {
+            $('#editingTaskId').value = '';
+            $('#taskTitle').value = '';
+            $('#taskDate').value = '';
+            $('#taskFormWrap').classList.remove('hidden');
+        });
+        $('#cancelTaskBtn').addEventListener('click', () => $('#taskFormWrap').classList.add('hidden'));
+
+        $('#saveTaskBtn').addEventListener('click', () => {
+            const title = $('#taskTitle').value.trim();
+            if (!title) return;
+            const editId = $('#editingTaskId').value;
+
+            if (editId) {
+                tasks = tasks.map(t => t.id === editId ? {
+                    ...t,
+                    title,
+                    date: $('#taskDate').value,
+                    priority: $('#taskPriority').value
+                } : t);
+            } else {
+                tasks.unshift({
+                    id: Date.now().toString(),
+                    title,
+                    date: $('#taskDate').value,
+                    priority: $('#taskPriority').value,
+                    completed: false
+                });
+            }
+
+            $('#taskFormWrap').classList.add('hidden');
+            saveAndReload();
+        });
+
+        // Schedule Tabs
+        document.querySelectorAll('.week-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                document.querySelectorAll('.week-tab').forEach(t => t.classList.remove('active'));
+                e.target.classList.add('active');
+                currentDay = e.target.dataset.day;
+                renderSchedule();
+            });
+        });
+
+        // Schedule Add / Edit Form
+        $('#addScheduleBtn').addEventListener('click', () => {
+            $('#editingSchedIndex').value = '';
+            $('#schedSubject').value = '';
+            $('#schedTime').value = '';
+            $('#schedRoom').value = '';
+            $('#scheduleFormWrap').classList.remove('hidden');
+        });
+        $('#cancelSchedBtn').addEventListener('click', () => $('#scheduleFormWrap').classList.add('hidden'));
+        $('#saveSchedBtn').addEventListener('click', () => {
+            const subject = $('#schedSubject').value.trim();
+            const time = $('#schedTime').value.trim();
+            const room = $('#schedRoom').value.trim();
+            if (!subject) return;
+
+            const editIndex = $('#editingSchedIndex').value;
+            if (!schedule[currentDay]) schedule[currentDay] = [];
+
+            if (editIndex !== '') {
+                schedule[currentDay][editIndex] = { time, subject, room };
+            } else {
+                schedule[currentDay].push({ time, subject, room });
+            }
+
+            $('#scheduleFormWrap').classList.add('hidden');
+            saveAndReload();
+            renderSchedule();
+        });
+
+        // Exam Add / Edit Form
+        $('#addExamBtn').addEventListener('click', () => {
+            $('#editingExamId').value = '';
+            $('#examSubject').value = '';
+            $('#examDate').value = '';
+            $('#examFormWrap').classList.remove('hidden');
+        });
+        $('#cancelExamBtn').addEventListener('click', () => $('#examFormWrap').classList.add('hidden'));
+        $('#saveExamBtn').addEventListener('click', () => {
+            const subject = $('#examSubject').value.trim();
+            const date = $('#examDate').value;
+            if (!subject) return;
+
+            const editId = $('#editingExamId').value;
+            if (editId) {
+                exams = exams.map(e => e.id === editId ? { ...e, subject, date } : e);
+            } else {
+                exams.push({ id: Date.now().toString(), subject, date });
+            }
+
+            $('#examFormWrap').classList.add('hidden');
+            saveAndReload();
+        });
+
+        // Subject Add / Edit Form
+        $('#addSubjectBtn').addEventListener('click', () => {
+            $('#editingSubjectId').value = '';
+            $('#subjectNameInput').value = '';
+            $('#subjectProgInput').value = '';
+            $('#subjectFormWrap').classList.remove('hidden');
+        });
+        $('#cancelSubjectBtn').addEventListener('click', () => $('#subjectFormWrap').classList.add('hidden'));
+        $('#saveSubjectBtn').addEventListener('click', () => {
+            const name = $('#subjectNameInput').value.trim();
+            const progress = parseInt($('#subjectProgInput').value) || 0;
+            if (!name) return;
+
+            const editId = $('#editingSubjectId').value;
+            if (editId) {
+                subjects = subjects.map(s => s.id === editId ? { ...s, name, progress } : s);
+            } else {
+                subjects.push({ id: Date.now().toString(), name, progress, color: 'var(--blue)' });
+            }
+
+            $('#subjectFormWrap').classList.add('hidden');
+            saveAndReload();
+            renderSubjects();
+        });
+
+        // Profile Modal
+        $('#profileBtn').addEventListener('click', () => {
+            $('#profileNameInput').value = userProfile.name;
+            $('#profileModal').classList.add('active');
+        });
+        $('#closeProfileBtn').addEventListener('click', () => $('#profileModal').classList.remove('active'));
+        $('#saveProfileBtn').addEventListener('click', () => {
+            userProfile.name = $('#profileNameInput').value.trim() || 'Алишер';
+            saveAndReload();
+            renderProfile();
+            $('#profileModal').classList.remove('active');
+        });
+
+        // Calendar Controls
+        $('#prevMonth').addEventListener('click', () => {
+            calendarDate.setMonth(calendarDate.getMonth() - 1);
+            renderCalendar();
+        });
+        $('#nextMonth').addEventListener('click', () => {
+            calendarDate.setMonth(calendarDate.getMonth() + 1);
+            renderCalendar();
+        });
+
+        // Notifications
+        $('#notifBtn').addEventListener('click', () => $('#notifDropdown').classList.toggle('active'));
+        $('#clearNotifs').addEventListener('click', () => {
+            $('#notifList').innerHTML = `<p class="muted" style="text-align: center;">Уведомлений нет</p>`;
+            $('#notifBadge').style.display = 'none';
+        });
+    }
+</script>
+</body>
+</html>

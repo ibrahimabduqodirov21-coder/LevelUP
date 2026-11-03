@@ -3,13 +3,291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="0; url=auth.html">
-    <title>Вход в систему — StudyPlan</title>
+    <title>Вход — StudyPlan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue: #4f6df5;
+            --blue-hover: #3b58e0;
+            --text: #172443;
+            --muted: #78849d;
+            --border: #e7edf7;
+            --background: #f5f7fc;
+            --white: #fff;
+            --red: #c93737;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            color: var(--text);
+            background:
+                radial-gradient(ellipse at 15% 15%, #e8edff 0, transparent 38%),
+                var(--background);
+            font-family: Inter, Arial, sans-serif;
+        }
+
+        button, input { font: inherit; }
+        button { cursor: pointer; }
+
+        .auth-card {
+            width: min(100%, 420px);
+            padding: 32px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: 0 16px 48px rgba(35, 57, 100, .1);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: var(--text);
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .brand-icon {
+            display: grid;
+            width: 38px;
+            height: 38px;
+            place-items: center;
+            border-radius: 10px;
+            background: var(--blue);
+            color: white;
+        }
+
+        .subtitle {
+            margin: 0 0 24px;
+            color: var(--muted);
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 20px;
+            padding: 5px;
+            border-radius: 10px;
+            background: #f2f4fa;
+        }
+
+        .tab-btn {
+            padding: 10px;
+            border: 0;
+            border-radius: 7px;
+            background: transparent;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: var(--blue);
+            box-shadow: 0 1px 5px rgba(35, 57, 100, .1);
+        }
+
+        .form-box { display: none; }
+        .form-box.active { display: block; }
+
+        .form-group { margin-bottom: 15px; }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 13px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(79, 109, 245, .12);
+        }
+
+        .btn-submit {
+            width: 100%;
+            margin-top: 5px;
+            padding: 12px;
+            border: 0;
+            border-radius: 8px;
+            background: var(--blue);
+            color: white;
+            font-weight: 700;
+        }
+
+        .btn-submit:hover { background: var(--blue-hover); }
+
+        .message {
+            display: none;
+            margin: 0 0 15px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .message.error {
+            display: block;
+            background: #ffebeb;
+            color: var(--red);
+        }
+
+        .message.success {
+            display: block;
+            background: #e9f8f1;
+            color: #147d5c;
+        }
+
+        @media (max-width: 480px) {
+            .auth-card { padding: 24px 20px; }
+        }
+    </style>
 </head>
 <body>
-    <p>Переход на страницу входа... <a href="auth.html">Продолжить</a></p>
+    <main class="auth-card">
+        <div class="brand"><span class="brand-icon">🎓</span> StudyPlan</div>
+        <p class="subtitle">Твой удобный план учёбы начинается здесь</p>
+
+        <div class="tabs" role="tablist" aria-label="Вход или регистрация">
+            <button class="tab-btn active" id="loginTab" type="button" role="tab" aria-selected="true">Вход</button>
+            <button class="tab-btn" id="registerTab" type="button" role="tab" aria-selected="false">Регистрация</button>
+        </div>
+
+        <p class="message" id="message" role="status" aria-live="polite"></p>
+
+        <section class="form-box active" id="loginBox" aria-labelledby="loginTab">
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email / логин</label>
+                    <input type="text" id="loginEmail" autocomplete="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Пароль</label>
+                    <input type="password" id="loginPassword" autocomplete="current-password" required>
+                </div>
+                <button class="btn-submit" type="submit">Войти</button>
+            </form>
+        </section>
+
+        <section class="form-box" id="registerBox" aria-labelledby="registerTab">
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="registerName">Имя</label>
+                    <input type="text" id="registerName" autocomplete="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email / логин</label>
+                    <input type="text" id="registerEmail" autocomplete="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Пароль</label>
+                    <input type="password" id="registerPassword" autocomplete="new-password" minlength="6" required>
+                </div>
+                <button class="btn-submit" type="submit">Создать аккаунт</button>
+            </form>
+        </section>
+    </main>
+
     <script>
-        window.location.replace('auth.html');
+        const loginTab = document.getElementById('loginTab');
+        const registerTab = document.getElementById('registerTab');
+        const loginBox = document.getElementById('loginBox');
+        const registerBox = document.getElementById('registerBox');
+        const message = document.getElementById('message');
+
+        function showMessage(text, type) {
+            message.textContent = text;
+            message.className = `message ${type}`;
+        }
+
+        function showForm(form) {
+            const isLogin = form === 'login';
+            loginBox.classList.toggle('active', isLogin);
+            registerBox.classList.toggle('active', !isLogin);
+            loginTab.classList.toggle('active', isLogin);
+            registerTab.classList.toggle('active', !isLogin);
+            loginTab.setAttribute('aria-selected', String(isLogin));
+            registerTab.setAttribute('aria-selected', String(!isLogin));
+            message.className = 'message';
+            message.textContent = '';
+        }
+
+        function loadUser() {
+            try {
+                return JSON.parse(localStorage.getItem('sp_user') || 'null');
+            } catch (error) {
+                console.error('Could not read the saved account.', error);
+                return null;
+            }
+        }
+
+        loginTab.addEventListener('click', () => showForm('login'));
+        registerTab.addEventListener('click', () => showForm('register'));
+
+        document.getElementById('registerForm').addEventListener('submit', event => {
+            event.preventDefault();
+            const name = document.getElementById('registerName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+
+            if (!name || !email || !password) {
+                showMessage('Заполните все поля.', 'error');
+                return;
+            }
+
+            try {
+                localStorage.setItem('sp_user', JSON.stringify({ name, email, password }));
+                document.getElementById('loginEmail').value = email;
+                document.getElementById('loginPassword').value = '';
+                showForm('login');
+                showMessage('Аккаунт создан. Теперь войдите с вашим паролем.', 'success');
+            } catch (error) {
+                console.error('Could not save the account.', error);
+                showMessage('Не удалось сохранить аккаунт в этом браузере.', 'error');
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', event => {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const user = loadUser();
+
+            if (!user || user.email !== email || user.password !== password) {
+                showMessage('Неверный логин или пароль. Проверьте данные или создайте аккаунт.', 'error');
+                return;
+            }
+
+            try {
+                localStorage.setItem('sp_profile', JSON.stringify({ name: user.name }));
+                localStorage.setItem('sp_is_logged_in', 'true');
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Could not save the login state.', error);
+                showMessage('Не удалось войти: браузер не сохранил данные.', 'error');
+            }
+        });
     </script>
 </body>
 </html>

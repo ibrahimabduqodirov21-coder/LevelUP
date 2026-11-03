@@ -882,7 +882,7 @@
 
                 <button class="profile-btn" id="profileBtn">
                     <div class="profile-avatar" id="avatarLetter">А</div>
-                    <span id="userNameDisplay">Алишер</span>
+                    <span id="userNameDisplay">User</span>
                 </button>
             </div>
         </header>
@@ -890,7 +890,7 @@
         <!-- Welcome Banner -->
         <section class="welcome" id="dashboard">
             <div>
-                <h1 id="greetingText">Привет, Алишер! 👋</h1>
+                <h1 id="greetingText">Привет, User! 👋</h1>
                 <p>Пусть твои планы сегодня станут реальностью! 🚀</p>
             </div>
             <div class="today-date-badge">
@@ -905,7 +905,7 @@
                     <div class="stat-icon blue">✓</div>
                 </div>
                 <h2 id="todayCount">0</h2>
-                <p>Заданий сегодня</p>
+                <p>Заданий в работе</p>
             </article>
 
             <article class="stat-card">
@@ -1097,6 +1097,9 @@
 </div>
 
 <script>
+    if (!localStorage.getItem('sp_is_logged_in')) {
+    window.location.href = 'auth.html';
+    }
     // Global State & Storage
     let tasks = JSON.parse(localStorage.getItem('sp_tasks')) || [
         { id: '1', title: 'Сдать лабораторную работу по Python', date: '2026-10-22', priority: 'High', completed: false },
@@ -1124,7 +1127,8 @@
         Thu: [], Fri: [], Sat: []
     };
 
-    let userProfile = JSON.parse(localStorage.getItem('sp_profile')) || { name: 'Алишер' };
+    const savedUser = JSON.parse(localStorage.getItem('sp_user') || 'null');
+    let userProfile = JSON.parse(localStorage.getItem('sp_profile')) || { name: savedUser?.name || 'User' };
 
     let currentFilter = 'all';
     let currentDay = 'Tue';
@@ -1535,7 +1539,7 @@
         });
         $('#closeProfileBtn').addEventListener('click', () => $('#profileModal').classList.remove('active'));
         $('#saveProfileBtn').addEventListener('click', () => {
-            userProfile.name = $('#profileNameInput').value.trim() || 'Алишер';
+            userProfile.name = $('#profileNameInput').value.trim() || 'User';
             saveAndReload();
             renderProfile();
             $('#profileModal').classList.remove('active');
